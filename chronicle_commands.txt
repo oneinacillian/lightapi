@@ -1,0 +1,70 @@
+pplication Options:
+
+Config Options for exp_ws_plugin:
+  --exp-ws-host arg                     Websocket server host to connect to
+  --exp-ws-port arg                     Websocket server port to connect to
+  --exp-ws-path arg (=/)                Websocket server URL path
+  --exp-ws-max-unack arg (=1000)        Receiver will pause at so many 
+                                        unacknowledged blocks
+  --exp-ws-max-queue arg (=10000)       Receiver will pause if outbound queue 
+                                        exceeds this limit
+  --exp-ws-bin-header arg (=0)          Start export messages with 32-bit 
+                                        native msgtype,msgopt
+
+Config Options for receiver_plugin:
+  --host arg (=localhost)               Host to connect to (nodeos)
+  --port arg (=8080)                    Port to connect to (nodeos 
+                                        state-history plugin)
+  --receiver-state-db-size arg (=1024)  database size in MB
+  --mode arg                            Receiver mode. Values:
+                                         scan:          read blocks 
+                                                        sequentially and export
+                                         scan-noexport: read blocks 
+                                                        sequentially without 
+                                                        export
+                                         interactive:   random access
+                                        
+  --report-every arg (=10000)           Report current state every N blocks
+  --max-queue-size arg (=10000)         Maximum size of appbase priority queue
+  --skip-block-events arg (=0)          Do not produce BLOCK events
+  --skip-table-deltas arg (=0)          Do not produce table delta events
+  --skip-traces arg (=0)                Do not produce transaction trace events
+  --skip-account-info arg (=0)          Do not produce permissions and account 
+                                        metadata events
+  --irreversible-only arg (=0)          Fetch only irreversible blocks
+  --start-block arg (=0)                Start from a snapshot block instead of 
+                                        genesis
+  --end-block arg (=4294967295)         Stop receiver before this block number
+  --stale-deadline arg (=10000)         Stale socket deadline, msec
+  --enable-receiver-filter arg (=0)     Filter traces by receiver account
+  --include-receiver arg                Account(s) to match in action receipts
+  --enable-auth-filter arg (=0)         Filter traces by authorizer
+  --include-auth arg                    Account(s) to match in authorizers
+  --blacklist-action arg                contract:action to exclude from traces
+  --enable-tables-filter arg (=0)       Filter table deltas by contract
+  --include-tables-contract arg         Contract account(s) to match in table 
+                                        deltas
+  --blacklist-tables-contract arg       Blacklisted contract account(s) for 
+                                        table deltas
+  --save-snapshot arg                   Save a portable Chronicle snapshot to a
+                                        file
+  --restore-snapshot arg                Restore from a portable Chronicle 
+                                        snapshot
+
+Application Config Options:
+  --plugin arg                          Plugin(s) to enable, may be specified 
+                                        multiple times
+
+Application Command Line Options:
+  -h [ --help ]                         Print this help message and exit.
+  -v [ --version ]                      Print version information.
+  --full-version                        Print full version information.
+  --print-default-config                Print default configuration template
+  -d [ --data-dir ] arg                 Directory containing program runtime 
+                                        data
+  --config-dir arg                      Directory containing configuration 
+                                        files such as config.ini
+  -c [ --config ] arg (=config.ini)     Configuration file name relative to 
+                                        config-dir
+  -l [ --logconf ] arg (=logging.json)  Logging configuration file name/path 
+                                        for library users

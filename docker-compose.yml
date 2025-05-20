@@ -1,0 +1,99 @@
+version: '3.8'
+
+services:
+  lightapi:
+    build:
+      context: ./lightapi
+      dockerfile: Dockerfile
+    ports:
+      - "5101-5105:5101-5105"
+      - "8100:8100"
+    volumes:
+      - lightapi_data:/opt/eosio_light_api
+      - mysql_data:/var/lib/mysql
+      - ./backups:/srv/eos/backups:ro  # Read-only bind mount for backups
+      - ./lightapi/mariadb.cnf:/etc/mysql/mariadb.conf.d/99-custom.cnf:ro
+    deploy:
+      resources:
+        limits:
+          memory: 96G    # Allow up to 75% of system memory
+          cpus: '16'
+        reservations:
+          memory: 64G    # Guarantee at least 50% of system memory
+          cpus: '8'
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+      memlock:
+        soft: -1
+        hard: -1
+    environment:
+      - MOJO_MAX_WEBSOCKET_SIZE=0      # 0 = unlimited
+      - MOJO_MAX_MESSAGE_SIZE=0
+      - MOJO_MAX_BUFFER_SIZE=0
+      #- MARIADB_INNODB_BUFFER_POOL_SIZE=32G
+      - PERL_ITHREADS=1
+      - PERL_MAX_MEMORY=16G
+    # sysctls:
+    #   - vm.swappiness=10
+      # - vm.dirty_ratio=40
+      # - vm.dirty_background_ratio=10
+    networks:
+      - eos_network
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "8100"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  chronicle:
+    build:
+      context: ./chronicle
+      dockerfile: Dockerfile
+    volumes:
+      - chronicle_data:/srv/eos/chronicle-data
+      - ./backups:/srv/eos/backups:ro  # Read-only bind mount for backups
+    environment:
+      - START_BLOCK=1000
+    deploy:
+      resources:
+        limits:
+          memory: 16G
+          cpus: '8'
+        reservations:
+          memory: 12G
+          cpus: '4'
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    networks:
+      - eos_network
+    depends_on:
+      lightapi:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "nc", "-z", "lightapi", "8100"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # debug:
+  #   image: alpine:latest
+  #   command: sh -c "apk add --no-cache curl netcat-openbsd mariadb-client && tail -f /dev/null"
+  #   networks:
+  #     - eos_network
+  #   depends_on:
+  #     - lightapi
+
+networks:
+  eos_network:
+    driver: bridge
+
+volumes:
+  lightapi_data:
+  chronicle_data:
+  mysql_data:

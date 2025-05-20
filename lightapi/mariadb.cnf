@@ -1,0 +1,55 @@
+[mysqld]
+# Connection handling
+max_connections = 1000
+wait_timeout = 28800
+interactive_timeout = 28800
+connect_timeout = 60
+
+# Buffer settings for 128GB system
+innodb_buffer_pool_size = 64G           # 50% of total RAM
+innodb_buffer_pool_instances = 16       # One per 4GB of buffer pool
+innodb_log_buffer_size = 2G
+innodb_log_file_size = 4G
+innodb_read_io_threads = 16
+innodb_write_io_threads = 16
+
+# Performance settings
+innodb_flush_log_at_trx_commit = 2
+innodb_flush_method = O_DIRECT
+innodb_io_capacity = 5000              # Higher for better I/O
+innodb_io_capacity_max = 10000         # Higher for better I/O
+innodb_lru_scan_depth = 2048
+innodb_lock_wait_timeout = 120
+
+# Table settings
+table_open_cache = 8192
+table_definition_cache = 4096
+open_files_limit = 65535
+
+# Temporary tables
+tmp_table_size = 16G                   # Increased for large operations
+max_heap_table_size = 16G              # Matched with tmp_table_size
+
+# Sort buffer settings
+sort_buffer_size = 2G
+read_buffer_size = 2G
+read_rnd_buffer_size = 2G
+join_buffer_size = 2G
+
+# Network settings
+max_allowed_packet = 1G
+net_read_timeout = 120
+net_write_timeout = 120
+net_retry_count = 10
+
+# Query cache (disabled for better performance)
+query_cache_type = 0
+query_cache_size = 0
+
+# Error logging
+log_error = /var/log/mysql/error.log
+log_warnings = 2
+
+# Batch settings
+innodb_change_buffering = all
+innodb_doublewrite = 0
